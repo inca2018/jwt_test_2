@@ -1,3 +1,8 @@
+/*
+ * Esta clase se encarga de filtrar las solicitudes HTTP para autorizar el acceso basado en tokens JWT.
+ * Comprueba la presencia y validez del token JWT en el encabezado de autorización de la solicitud.
+ * Si el token es válido, verifica si el usuario tiene los roles necesarios para acceder a la URL solicitada.
+ */
 package com.inca.reto.tecnico.jwt;
 
 import io.jsonwebtoken.Jwts;
@@ -62,9 +67,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     public boolean checkAuthorization(UsernamePasswordAuthenticationToken authenticationToken, HttpServletRequest request) {
-        // Aquí puedes implementar la lógica para verificar los roles del usuario y si tiene acceso a la URL solicitada
-        // Por ejemplo, puedes acceder a los detalles de autenticación y verificar los roles del usuario
-        // En este caso de ejemplo, supondremos que el usuario debe tener el rol "USER" para acceder a la URL "/api/private"
+
         return authenticationToken.getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_USER"));
     }

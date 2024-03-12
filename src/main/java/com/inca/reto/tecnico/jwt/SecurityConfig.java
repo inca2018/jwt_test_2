@@ -1,3 +1,7 @@
+/*
+ * Esta clase configura la seguridad de la aplicación mediante Spring Security.
+ * Se habilita la autenticación basada en JWT (JSON Web Token) para proteger los endpoints.
+ */
 package com.inca.reto.tecnico.jwt;
 
 import io.jsonwebtoken.Jwts;
@@ -22,28 +26,33 @@ import javax.crypto.SecretKey;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    // Clave secreta para firmar y verificar JWT
     private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
+    // Configuración de las reglas de seguridad
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // Filtro para la autenticación basada en JWT
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager(), secretKey);
 
         http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/public/**").permitAll()
+                .antMatchers("/api/public/**").permitAll() // Permitir acceso público a estos endpoints
                 .antMatchers("/api/private/**").hasRole("USER") // Requiere rol USER para /api/private
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
+    // Configuración del codificador de contraseñas
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Configuración de la autenticación en memoria (solo para pruebas)
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
@@ -52,12 +61,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .roles("USER");
     }
 
+    // Bean para el filtro de autorización basado en JWT
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
         return new JwtAuthorizationFilter(secretKey);
     }
 
+    // Bean para obtener la clave secreta
     @Bean
     public SecretKey secretKey() {
         return secretKey;

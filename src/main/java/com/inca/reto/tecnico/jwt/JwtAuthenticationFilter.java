@@ -1,3 +1,8 @@
+/*
+ * Esta clase extiende UsernamePasswordAuthenticationFilter de Spring Security,
+ * lo que significa que se utiliza para procesar las solicitudes de autenticación
+ * basadas en nombre de usuario y contraseña.
+ */
 package com.inca.reto.tecnico.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,23 +26,35 @@ import java.util.Date;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    public static final long EXPIRATION_TIME = 864_000_000; // 10 días en milisegundos
+    // Tiempo de expiración del token JWT (10 días en milisegundos)
+    public static final long EXPIRATION_TIME = 864_000_000;
+    // Nombre del encabezado que contiene el token JWT
     public static final String HEADER_STRING = "Authorization";
+    // Prefijo utilizado en el encabezado para indicar que el valor es un token JWT
     public static final String TOKEN_PREFIX = "Bearer ";
-    public static final String SECRET = "Mundo2024."; // Clave secreta para firmar y verificar el token JWT
+    // Clave secreta para firmar y verificar el token JWT
+    public static final String SECRET = "Mundo2024.";
 
     private final AuthenticationManager authenticationManager;
     private final SecretKey secretKey;
 
+    /*
+     * Constructor de la clase que recibe un AuthenticationManager y una SecretKey.
+     */
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, SecretKey secretKey) {
         this.authenticationManager = authenticationManager;
         this.secretKey = secretKey;
     }
 
+    /*
+     * Método invocado al intentar autenticar al usuario con las credenciales proporcionadas.
+     * Lee las credenciales del cuerpo de la solicitud y crea un token de autenticación,
+     * que luego se pasa al AuthenticationManager para la autenticación.
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            // Mapea el JSON del cuerpo de la solicitud a la clase de credenciales
+            // Lee las credenciales del cuerpo de la solicitud
             UserCredentials credentials = new ObjectMapper().readValue(request.getInputStream(), UserCredentials.class);
 
             // Crea un token de autenticación con las credenciales proporcionadas
@@ -54,6 +71,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
+    /*
+     * Método invocado cuando la autenticación es exitosa.
+     * Genera un token JWT con el nombre de usuario y los roles del usuario autenticado,
+     * y lo incluye en la respuesta HTTP.
+     */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String token = Jwts.builder()
@@ -64,7 +86,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
 
-        response.addHeader("Authorization", TOKEN_PREFIX + token);
+        response.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write("{\"token\": \"" + token + "\"}");

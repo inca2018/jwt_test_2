@@ -1,0 +1,96 @@
+{
+	"info": {
+		"_postman_id": "8b4404fa-a74a-48e7-ad76-13fc3d45a403",
+		"name": "PruebaTecnica",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8971068",
+		"_collection_link": "https://speeding-robot-862984.postman.co/workspace/IWS-MEXICO~5caf58c2-cd10-4d1c-b3df-15bf4bcabcc8/collection/8971068-8b4404fa-a74a-48e7-ad76-13fc3d45a403?action=share&source=collection_link&creator=8971068"
+	},
+	"item": [
+		{
+			"name": "Registro Tipos Cambio",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"monto\": 100.00,\r\n    \"monedaOrigen\": \"USD\",\r\n    \"monedaDestino\": \"EUR\",\r\n    \"tipoCambio\": 0.85,\r\n    \"usuario\": {\r\n        \"id\": 2\r\n    }\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/public/tipos-cambio",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"public",
+						"tipos-cambio"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generacion token",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user\",\r\n    \"password\": \"password\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listado TiposCambio",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/public/tipos-cambio",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"public",
+						"tipos-cambio"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
